@@ -1,0 +1,32 @@
+# markdownpad
+
+A focused, Notepad-inspired markdown editor for macOS. Open, edit, save markdown files. Nothing else.
+
+## Features
+
+- Open, edit, and save `.md` / `.markdown` files
+- Right-click anywhere in the document (or `⇧⌘P`) to flip between **edit** and **view** modes
+- View mode renders GitHub-flavored markdown — including tables, footnotes, syntax-highlighted code, and **mermaid diagrams**
+- Interactive task-list checkboxes — click them in view mode to toggle
+- Multi-window — `⌘N` opens a new editor; closing with unsaved changes prompts you
+- Reopens the documents you had open the last time you quit
+- Light, Dark, and System appearance, plus app themes (Classic, Dim, Solarized, Nord, Rose) and code-highlight themes (GitHub, Atom One, Tokyo Night, Nord, Monokai)
+- Native macOS chrome with traffic lights, File menu, Open Recent, file-association for `.md`
+
+## Install
+
+Download the latest `.dmg` from the [Releases](../../releases) page, open it, and drag **markdownpad** into Applications.
+
+## Keyboard shortcuts
+
+| Action                  | Shortcut             |
+| ----------------------- | -------------------- |
+| New window              | `⌘N`                 |
+| Open…                   | `⌘O`                 |
+| Save                    | `⌘S`                 |
+| Save As…                | `⇧⌘S`                |
+| Toggle edit / view      | `⇧⌘P` or right-click |
+| Zoom in / out           | `⇧⌘=` / `⇧⌘-`        |
+| Reset zoom              | `⌘0`                 |
+| Close window            | `⌘W`                 |
+| Quit                    | `⌘Q`                 |

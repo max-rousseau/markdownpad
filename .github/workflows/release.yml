@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write   # required to create the GitHub Release and upload assets
+
+jobs:
+  release-mac:
+    runs-on: macos-14   # Apple Silicon runner (arm64)
+    timeout-minutes: 30
+    environment: release   # gates secrets behind required-reviewer approval
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4.4.0
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Build, sign, notarize, publish
+        env:
+          # Auth for the GitHub Release upload (electron-builder reads GH_TOKEN)
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          # Code-signing identity — base64-encoded .p12 + its password.
+          # electron-builder picks these up from CSC_LINK + CSC_KEY_PASSWORD.
+          CSC_LINK: ${{ secrets.MAC_CERTIFICATE }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
+
+          # Notarization (App-Specific Password flow)
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: npx electron-builder --mac --arm64 --publish always
