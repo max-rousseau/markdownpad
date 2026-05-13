@@ -30,7 +30,10 @@ jobs:
       - name: Test
         run: npm test
 
-      - name: Build, sign, notarize, publish
+      - name: Build renderer/main/preload bundles
+        run: npm run build
+
+      - name: Sign, notarize, publish
         env:
           # Auth for the GitHub Release upload (electron-builder reads GH_TOKEN)
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
