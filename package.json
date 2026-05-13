@@ -36,6 +36,7 @@
     "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
+    "@electron/fuses": "^2.1.1",
     "@tailwindcss/vite": "^4.3.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -101,8 +102,6 @@
         "role": "Editor"
       }
     ],
-    "electronFuses": {
-      "enableCookieEncryption": false
-    }
+    "afterPack": "./build/afterPack.cjs"
   }
 }
