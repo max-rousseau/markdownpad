@@ -100,6 +100,9 @@
         "name": "Markdown",
         "role": "Editor"
       }
-    ]
+    ],
+    "electronFuses": {
+      "enableCookieEncryption": false
+    }
   }
 }
