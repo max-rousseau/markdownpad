@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>markdownpad — Theme Preview</title>
+  <style>
+    /* ------------------------------------------------------------------ *
+     *  PALETTES — one CSS-variable bundle per pack × mode                *
+     * ------------------------------------------------------------------ */
+
+    /* Plain — the unstyled baseline */
+    body[data-pack="plain"][data-mode="light"] {
+      --bg: #ffffff;
+      --fg: #1a1a1a;
+      --fg-muted: #5a5a5a;
+      --border: #e1e4e8;
+      --accent: #0066cc;
+      --accent-muted: #e6f0fa;
+      --code-bg: #f6f8fa;
+      --code-fg: #24292e;
+      --code-keyword: #d73a49;
+      --code-string: #032f62;
+      --code-number: #005cc5;
+      --code-comment: #6a737d;
+      --code-fn: #6f42c1;
+      --code-type: #005cc5;
+      --blockquote-border: #d0d7de;
+      --blockquote-fg: #57606a;
+    }
+    body[data-pack="plain"][data-mode="dark"] {
+      --bg: #0d1117;
+      --fg: #e6edf3;
+      --fg-muted: #8d96a0;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --accent-muted: #1b2a3d;
+      --code-bg: #161b22;
+      --code-fg: #e6edf3;
+      --code-keyword: #ff7b72;
+      --code-string: #a5d6ff;
+      --code-number: #79c0ff;
+      --code-comment: #8b949e;
+      --code-fn: #d2a8ff;
+      --code-type: #79c0ff;
+      --blockquote-border: #30363d;
+      --blockquote-fg: #8d96a0;
+    }
+
+    /* Forest — sage / olive / evergreen */
+    body[data-pack="forest"][data-mode="light"] {
+      --bg: #fdfbf6;
+      --fg: #2d3a23;
+      --fg-muted: #5a6b48;
+      --border: #d6dbc4;
+      --accent: #5a7a3c;
+      --accent-muted: #e8ecd8;
+      --code-bg: #f0eee5;
+      --code-fg: #3a4d2c;
+      --code-keyword: #6e8a32;
+      --code-string: #a36a3c;
+      --code-number: #8a6a2c;
+      --code-comment: #8a8a6e;
+      --code-fn: #4a6a2c;
+      --code-type: #2c6a4a;
+      --blockquote-border: #b4c08c;
+      --blockquote-fg: #5a6b48;
+    }
+    body[data-pack="forest"][data-mode="dark"] {
+      --bg: #0f1a0f;
+      --fg: #c4d4a8;
+      --fg-muted: #7a8c68;
+      --border: #2a3a22;
+      --accent: #a8d68c;
+      --accent-muted: #1f2e18;
+      --code-bg: #162216;
+      --code-fg: #c4d4a8;
+      --code-keyword: #b8d65c;
+      --code-string: #d8a86c;
+      --code-number: #c8c870;
+      --code-comment: #5e7858;
+      --code-fn: #98c870;
+      --code-type: #88c8a8;
+      --blockquote-border: #3a5a2c;
+      --blockquote-fg: #8a9c78;
+    }
+
+    /* Midnight — cool blue / indigo / periwinkle */
+    body[data-pack="midnight"][data-mode="light"] {
+      --bg: #f4f6fa;
+      --fg: #1a2440;
+      --fg-muted: #4a5878;
+      --border: #d0d8e8;
+      --accent: #4060a0;
+      --accent-muted: #e0e6f2;
+      --code-bg: #eaeef5;
+      --code-fg: #1a2440;
+      --code-keyword: #4060a0;
+      --code-string: #5b8c5a;
+      --code-number: #2c5a8c;
+      --code-comment: #7080a0;
+      --code-fn: #6048a0;
+      --code-type: #2c6a8c;
+      --blockquote-border: #a4b8d8;
+      --blockquote-fg: #4a5878;
+    }
+    body[data-pack="midnight"][data-mode="dark"] {
+      --bg: #0a0e1f;
+      --fg: #c4d0f0;
+      --fg-muted: #6878a0;
+      --border: #1a2240;
+      --accent: #8090d0;
+      --accent-muted: #14182c;
+      --code-bg: #121a30;
+      --code-fg: #c4d0f0;
+      --code-keyword: #8090d0;
+      --code-string: #a890d0;
+      --code-number: #6890d0;
+      --code-comment: #506080;
+      --code-fn: #b0a0e8;
+      --code-type: #88a8d8;
+      --blockquote-border: #3a4a7a;
+      --blockquote-fg: #7888a8;
+    }
+
+    /* Solar Flare — warm amber / burnt orange / gold */
+    body[data-pack="solarflare"][data-mode="light"] {
+      --bg: #fdf6e8;
+      --fg: #3a2818;
+      --fg-muted: #7a5a3a;
+      --border: #e8d8b8;
+      --accent: #c84a1a;
+      --accent-muted: #f8e8d0;
+      --code-bg: #f5ecd6;
+      --code-fg: #3a2818;
+      --code-keyword: #c84a1a;
+      --code-string: #7a5418;
+      --code-number: #a8541a;
+      --code-comment: #a0907a;
+      --code-fn: #8a3818;
+      --code-type: #5a4818;
+      --blockquote-border: #e8b878;
+      --blockquote-fg: #7a5a3a;
+    }
+    body[data-pack="solarflare"][data-mode="dark"] {
+      --bg: #1a0a05;
+      --fg: #f0d4a8;
+      --fg-muted: #b09078;
+      --border: #3a1a0a;
+      --accent: #f0a040;
+      --accent-muted: #2a1408;
+      --code-bg: #251208;
+      --code-fg: #f0d4a8;
+      --code-keyword: #f0a040;
+      --code-string: #d8884c;
+      --code-number: #e8b860;
+      --code-comment: #7a5040;
+      --code-fn: #f0c068;
+      --code-type: #e8a878;
+      --blockquote-border: #8a4818;
+      --blockquote-fg: #b09078;
+    }
+
+    /* Cherry — peach / blush / burgundy */
+    body[data-pack="cherry"][data-mode="light"] {
+      --bg: #fef4f4;
+      --fg: #5a1a30;
+      --fg-muted: #8a4a60;
+      --border: #f0d8e0;
+      --accent: #c8408c;
+      --accent-muted: #fae0ec;
+      --code-bg: #f8e6ec;
+      --code-fg: #5a1a30;
+      --code-keyword: #c8408c;
+      --code-string: #a8508c;
+      --code-number: #c8487c;
+      --code-comment: #a08894;
+      --code-fn: #8a3070;
+      --code-type: #6a4070;
+      --blockquote-border: #f0a8c8;
+      --blockquote-fg: #8a4a60;
+    }
+    body[data-pack="cherry"][data-mode="dark"] {
+      --bg: #1a0810;
+      --fg: #f4c8d8;
+      --fg-muted: #b08898;
+      --border: #3a1a28;
+      --accent: #e060a0;
+      --accent-muted: #2a1018;
+      --code-bg: #2a1018;
+      --code-fg: #f4c8d8;
+      --code-keyword: #e060a0;
+      --code-string: #c890b8;
+      --code-number: #e088b0;
+      --code-comment: #705060;
+      --code-fn: #f098c0;
+      --code-type: #c0a0c0;
+      --blockquote-border: #7a2848;
+      --blockquote-fg: #b08898;
+    }
+
+    /* ------------------------------------------------------------------ *
+     *  LAYOUT                                                            *
+     * ------------------------------------------------------------------ */
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      transition: background-color 0.15s, color 0.15s;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 0.75rem 1.25rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+    }
+
+    .toolbar h1 {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--fg-muted);
+    }
+
+    .picker, .mode {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .picker button, .mode button {
+      padding: 0.4rem 0.75rem;
+      font: inherit;
+      font-size: 0.85rem;
+      background: transparent;
+      color: var(--fg-muted);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.1s, color 0.1s, border-color 0.1s;
+    }
+
+    .picker button:hover, .mode button:hover {
+      color: var(--fg);
+      border-color: var(--accent);
+    }
+
+    body[data-pack="plain"] .picker button[data-pack="plain"],
+    body[data-pack="forest"] .picker button[data-pack="forest"],
+    body[data-pack="midnight"] .picker button[data-pack="midnight"],
+    body[data-pack="solarflare"] .picker button[data-pack="solarflare"],
+    body[data-pack="cherry"] .picker button[data-pack="cherry"],
+    body[data-mode="light"] .mode button[data-mode="light"],
+    body[data-mode="dark"] .mode button[data-mode="dark"] {
+      background: var(--accent-muted);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    main.preview {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+      line-height: 1.6;
+    }
+
+    main h1, main h2, main h3 {
+      color: var(--fg);
+      letter-spacing: -0.015em;
+      margin-top: 1.75em;
+      margin-bottom: 0.5em;
+    }
+    main h1 { font-size: 2rem; margin-top: 0; }
+    main h2 { font-size: 1.5rem; }
+    main h3 { font-size: 1.15rem; }
+
+    main p, main li { color: var(--fg); }
+    main p { margin: 0.75em 0; }
+    main ul, main ol { padding-left: 1.5em; }
+    main li { margin: 0.25em 0; }
+
+    main a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      text-decoration-thickness: 1px;
+    }
+
+    main blockquote {
+      margin: 1em 0;
+      padding: 0.5em 1em;
+      border-left: 3px solid var(--blockquote-border);
+      color: var(--blockquote-fg);
+      background: var(--accent-muted);
+      border-radius: 0 4px 4px 0;
+    }
+
+    main code {
+      font-family: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+      font-size: 0.9em;
+      padding: 0.15em 0.4em;
+      background: var(--code-bg);
+      color: var(--code-fg);
+      border-radius: 3px;
+    }
+
+    main pre {
+      margin: 1em 0;
+      padding: 1em;
+      background: var(--code-bg);
+      color: var(--code-fg);
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    main pre code {
+      padding: 0;
+      background: transparent;
+      color: inherit;
+    }
+
+    /* highlight.js token mapping → our palette variables */
+    .hljs-keyword, .hljs-built_in, .hljs-literal {
+      color: var(--code-keyword);
+    }
+    .hljs-string, .hljs-attr {
+      color: var(--code-string);
+    }
+    .hljs-number, .hljs-symbol {
+      color: var(--code-number);
+    }
+    .hljs-comment, .hljs-quote {
+      color: var(--code-comment);
+      font-style: italic;
+    }
+    .hljs-function, .hljs-title, .hljs-title.function_ {
+      color: var(--code-fn);
+    }
+    .hljs-type, .hljs-class .hljs-title, .hljs-title.class_ {
+      color: var(--code-type);
+    }
+    .hljs-variable, .hljs-name { color: var(--code-fg); }
+    .hljs-params { color: var(--code-fg); }
+    .hljs-operator, .hljs-punctuation { color: var(--fg-muted); }
+
+    .mermaid-host {
+      background: var(--code-bg);
+      border-radius: 6px;
+      padding: 1.5em;
+      margin: 1em 0;
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+    }
+
+    .mermaid-host svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin: 0.75em 0;
+    }
+
+    .grid-2 > div {
+      padding: 0.75em;
+      background: var(--accent-muted);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.85em;
+      color: var(--fg-muted);
+    }
+
+    .grid-2 strong { color: var(--fg); }
+  </style>
+</head>
+<body data-pack="plain" data-mode="light">
+
+  <header class="toolbar">
+    <h1>markdownpad / themes</h1>
+    <div class="picker">
+      <button data-pack="plain">Plain</button>
+      <button data-pack="forest">Forest</button>
+      <button data-pack="midnight">Midnight</button>
+      <button data-pack="solarflare">Solar Flare</button>
+      <button data-pack="cherry">Cherry</button>
+    </div>
+    <div class="mode">
+      <button data-mode="light">Light</button>
+      <button data-mode="dark">Dark</button>
+    </div>
+  </header>
+
+  <main class="preview">
+
+    <h1>The quiet room</h1>
+
+    <p>
+      A focused, Notepad-inspired markdown editor for macOS. Open, edit, save
+      markdown files. Open <code>.md</code> files, toggle between
+      <strong>edit</strong> and <strong>view</strong> modes with <code>⇧⌘P</code>,
+      and let <a href="#">links and code</a> render inline. That's it.
+    </p>
+
+    <h2>Features</h2>
+    <ul>
+      <li>GitHub-flavored markdown rendering</li>
+      <li>Syntax-highlighted code blocks</li>
+      <li>Inline mermaid diagrams</li>
+      <li>Interactive task-list checkboxes</li>
+    </ul>
+
+    <blockquote>
+      <p>
+        Most of writing is just sitting down and doing it. The tools should
+        get out of the way.
+      </p>
+    </blockquote>
+
+    <h2>Sample code</h2>
+
+    <pre><code class="language-typescript"><span class="hljs-comment">// Returns the resolved theme based on the user's preference.</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title hljs-function_">resolveTheme</span>(<span class="hljs-params">pref: <span class="hljs-type">Theme</span></span>): <span class="hljs-type">ResolvedTheme</span> {
+  <span class="hljs-keyword">if</span> (pref === <span class="hljs-string">'system'</span>) {
+    <span class="hljs-keyword">return</span> matchMedia(<span class="hljs-string">'(prefers-color-scheme: dark)'</span>).matches
+      ? <span class="hljs-string">'dark'</span>
+      : <span class="hljs-string">'light'</span>;
+  }
+  <span class="hljs-keyword">return</span> pref;
+}
+
+<span class="hljs-keyword">const</span> palette = {
+  bg: <span class="hljs-string">'#0d1117'</span>,
+  fg: <span class="hljs-string">'#e6edf3'</span>,
+  accentLevel: <span class="hljs-number">0.85</span>,
+};
+</code></pre>
+
+    <h2>Sample diagram</h2>
+
+    <div class="mermaid-host">
+      <pre class="mermaid">
+flowchart LR
+  A[Markdown source] --&gt; B{Mode?}
+  B --&gt;|edit| C[CodeMirror]
+  B --&gt;|view| D[react-markdown]
+  D --&gt; E[Code blocks]
+  D --&gt; F[Mermaid]
+  D --&gt; G[Tables]
+      </pre>
+    </div>
+
+    <h2>Color reference</h2>
+    <div class="grid-2">
+      <div><strong>--bg</strong> background</div>
+      <div><strong>--fg</strong> foreground text</div>
+      <div><strong>--accent</strong> links / highlights</div>
+      <div><strong>--code-bg</strong> code block background</div>
+      <div><strong>--code-keyword</strong> keywords</div>
+      <div><strong>--code-string</strong> strings</div>
+      <div><strong>--code-comment</strong> comments</div>
+      <div><strong>--code-fn</strong> functions</div>
+    </div>
+
+  </main>
+
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/+esm';
+
+    const mermaidSource = document.querySelector('.mermaid').textContent;
+
+    // Theme variables for each pack × mode, fed into mermaid's `base` theme.
+    const mermaidThemes = {
+      plain: {
+        light: { theme: 'default' },
+        dark:  { theme: 'dark' },
+      },
+      forest: {
+        light: {
+          theme: 'base',
+          themeVariables: {
+            background: '#fdfbf6',
+            primaryColor: '#a8c08c',
+            primaryTextColor: '#2d3a23',
+            primaryBorderColor: '#5a7a3c',
+            lineColor: '#5a7a3c',
+            secondaryColor: '#d4d8b8',
+            tertiaryColor: '#e8ebd4',
+            mainBkg: '#a8c08c',
+            nodeBorder: '#5a7a3c',
+            edgeLabelBackground: '#fdfbf6',
+            fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+          },
+        },
+        dark: {
+          theme: 'base',
+          themeVariables: {
+            background: '#0f1a0f',
+            primaryColor: '#3a5a2c',
+            primaryTextColor: '#c4d4a8',
+            primaryBorderColor: '#a8d68c',
+            lineColor: '#a8d68c',
+            secondaryColor: '#2a4220',
+            tertiaryColor: '#1f2e18',
+            mainBkg: '#3a5a2c',
+            nodeBorder: '#a8d68c',
+            edgeLabelBackground: '#162216',
+            fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+          },
+        },
+      },
+      midnight: {
+        light: {
+          theme: 'base',
+          themeVariables: {
+            background: '#f4f6fa',
+            primaryColor: '#a4b8d8',
+            primaryTextColor: '#1a2440',
+            primaryBorderColor: '#4060a0',
+            lineColor: '#4060a0',
+            secondaryColor: '#c8d4ec',
+            tertiaryColor: '#dde4f2',
+            mainBkg: '#a4b8d8',
+            nodeBorder: '#4060a0',
+            edgeLabelBackground: '#f4f6fa',
+            fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+          },
+        },
+        dark: {
+          theme: 'base',
+          themeVariables: {
+            background: '#0a0e1f',
+            primaryColor: '#3a4a7a',
+            primaryTextColor: '#c4d0f0',
+            primaryBorderColor: '#8090d0',
+            lineColor: '#8090d0',
+            secondaryColor: '#2a3258',
+            tertiaryColor: '#1a2040',
+            mainBkg: '#3a4a7a',
+            nodeBorder: '#8090d0',
+            edgeLabelBackground: '#121a30',
+            fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+          },
+        },
+      },
+      solarflare: {
+        light: {
+          theme: 'base',
+          themeVariables: {
+            background: '#fdf6e8',
+            primaryColor: '#f0c068',
+            primaryTextColor: '#3a2818',
+            primaryBorderColor: '#c84a1a',
+            lineColor: '#c84a1a',
+            secondaryColor: '#fad898',
+            tertiaryColor: '#fce8c4',
+            mainBkg: '#f0c068',
+            nodeBorder: '#c84a1a',
+            edgeLabelBackground: '#fdf6e8',
+            fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+          },
+        },
+        dark: {
+          theme: 'base',
+          themeVariables: {
+            background: '#1a0a05',
+            primaryColor: '#8a4818',
+            primaryTextColor: '#f0d4a8',
+            primaryBorderColor: '#f0a040',
+            lineColor: '#f0a040',
+            secondaryColor: '#5a300c',
+            tertiaryColor: '#3a1f08',
+            mainBkg: '#8a4818',
+            nodeBorder: '#f0a040',
+            edgeLabelBackground: '#251208',
+            fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+          },
+        },
+      },
+      cherry: {
+        light: {
+          theme: 'base',
+          themeVariables: {
+            background: '#fef4f4',
+            primaryColor: '#f0a8c8',
+            primaryTextColor: '#5a1a30',
+            primaryBorderColor: '#c8408c',
+            lineColor: '#c8408c',
+            secondaryColor: '#f8c8d8',
+            tertiaryColor: '#fce0e8',
+            mainBkg: '#f0a8c8',
+            nodeBorder: '#c8408c',
+            edgeLabelBackground: '#fef4f4',
+            fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+          },
+        },
+        dark: {
+          theme: 'base',
+          themeVariables: {
+            background: '#1a0810',
+            primaryColor: '#7a2848',
+            primaryTextColor: '#f4c8d8',
+            primaryBorderColor: '#e060a0',
+            lineColor: '#e060a0',
+            secondaryColor: '#5a1830',
+            tertiaryColor: '#3a0e1a',
+            mainBkg: '#7a2848',
+            nodeBorder: '#e060a0',
+            edgeLabelBackground: '#2a1018',
+            fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+          },
+        },
+      },
+    };
+
+    async function renderMermaid(pack, mode) {
+      const cfg = mermaidThemes[pack][mode];
+      mermaid.initialize({ startOnLoad: false, ...cfg });
+
+      const host = document.querySelector('.mermaid-host');
+      host.innerHTML = `<pre class="mermaid">${mermaidSource}</pre>`;
+      await mermaid.run({ nodes: host.querySelectorAll('pre.mermaid') });
+    }
+
+    function setPack(pack) {
+      document.body.dataset.pack = pack;
+      renderMermaid(pack, document.body.dataset.mode);
+    }
+    function setMode(mode) {
+      document.body.dataset.mode = mode;
+      renderMermaid(document.body.dataset.pack, mode);
+    }
+
+    document.querySelectorAll('.picker button').forEach(btn => {
+      btn.addEventListener('click', () => setPack(btn.dataset.pack));
+    });
+    document.querySelectorAll('.mode button').forEach(btn => {
+      btn.addEventListener('click', () => setMode(btn.dataset.mode));
+    });
+
+    // Cmd-T cycles packs (preview parity with the proposed in-app shortcut)
+    const order = ['plain', 'forest', 'midnight', 'solarflare', 'cherry'];
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 't' && (e.metaKey || e.ctrlKey) && !e.shiftKey) {
+        e.preventDefault();
+        const i = order.indexOf(document.body.dataset.pack);
+        setPack(order[(i + 1) % order.length]);
+      }
+    });
+
+    renderMermaid('plain', 'light');
+  </script>
+
+</body>
+</html>
