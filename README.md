@@ -13,6 +13,10 @@ A focused, Notepad-inspired markdown editor for macOS. Open, edit, save markdown
 - Light, Dark, and System appearance, plus app themes (Classic, Dim, Solarized, Nord, Rose) and code-highlight themes (GitHub, Atom One, Tokyo Night, Nord, Monokai)
 - Native macOS chrome with traffic lights, File menu, Open Recent, file-association for `.md`
 
+## Themes
+
+[Live preview](https://max-rousseau.github.io/markdownpad/themes.html) of the upcoming v1.1.0 theme set — Plain, Forest, Midnight, Solar Flare, Cherry — each in light and dark modes.
+
 ## Install
 
 Download the latest `.dmg` from the [Releases](../../releases) page, open it, and drag **markdownpad** into Applications.
