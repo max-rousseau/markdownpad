@@ -4,17 +4,8 @@ import { dirname, join } from 'node:path'
 
 export type Theme = 'light' | 'dark' | 'system'
 
-export const APP_THEMES = ['classic', 'dim', 'solarized', 'nord', 'rose'] as const
-export type AppTheme = (typeof APP_THEMES)[number]
-
-export const CODE_THEMES = [
-  'github',
-  'atom-one',
-  'tokyo-night',
-  'nord',
-  'monokai',
-] as const
-export type CodeTheme = (typeof CODE_THEMES)[number]
+export const THEME_PACKS = ['plain', 'forest', 'midnight', 'solarflare', 'cherry'] as const
+export type ThemePack = (typeof THEME_PACKS)[number]
 
 export interface WindowBounds {
   width: number
@@ -25,24 +16,21 @@ export interface PersistedState {
   window: WindowBounds
   openFiles: string[]
   theme: Theme
-  appTheme: AppTheme
-  codeTheme: CodeTheme
+  themePack: ThemePack
 }
 
 const DEFAULTS: PersistedState = {
   window: { width: 760, height: 960 },
   openFiles: [],
   theme: 'system',
-  appTheme: 'classic',
-  codeTheme: 'github',
+  themePack: 'plain',
 }
 
 let cached: PersistedState = {
   window: { ...DEFAULTS.window },
   openFiles: [],
   theme: DEFAULTS.theme,
-  appTheme: DEFAULTS.appTheme,
-  codeTheme: DEFAULTS.codeTheme,
+  themePack: DEFAULTS.themePack,
 }
 let loaded = false
 
@@ -62,8 +50,7 @@ export function loadState(): PersistedState {
         ? parsed.openFiles.filter((p) => typeof p === 'string')
         : [],
       theme: isTheme(parsed.theme) ? parsed.theme : DEFAULTS.theme,
-      appTheme: isAppTheme(parsed.appTheme) ? parsed.appTheme : DEFAULTS.appTheme,
-      codeTheme: isCodeTheme(parsed.codeTheme) ? parsed.codeTheme : DEFAULTS.codeTheme,
+      themePack: isThemePack(parsed.themePack) ? parsed.themePack : DEFAULTS.themePack,
     }
   } catch {
     // No state yet, or unreadable — fall back to defaults silently.
@@ -83,32 +70,27 @@ export function setTheme(theme: Theme): void {
   cached.theme = theme
 }
 
-export function getCodeTheme(): CodeTheme {
-  return cached.codeTheme
+export function getThemePack(): ThemePack {
+  return cached.themePack
 }
 
-export function setCodeTheme(theme: CodeTheme): void {
-  cached.codeTheme = theme
+export function setThemePack(pack: ThemePack): void {
+  cached.themePack = pack
 }
 
-export function getAppTheme(): AppTheme {
-  return cached.appTheme
-}
-
-export function setAppTheme(theme: AppTheme): void {
-  cached.appTheme = theme
+export function cycleThemePack(): ThemePack {
+  const i = THEME_PACKS.indexOf(cached.themePack)
+  const next = THEME_PACKS[(i + 1) % THEME_PACKS.length]
+  cached.themePack = next
+  return next
 }
 
 function isTheme(value: unknown): value is Theme {
   return value === 'light' || value === 'dark' || value === 'system'
 }
 
-function isAppTheme(value: unknown): value is AppTheme {
-  return typeof value === 'string' && (APP_THEMES as readonly string[]).includes(value)
-}
-
-function isCodeTheme(value: unknown): value is CodeTheme {
-  return typeof value === 'string' && (CODE_THEMES as readonly string[]).includes(value)
+function isThemePack(value: unknown): value is ThemePack {
+  return typeof value === 'string' && (THEME_PACKS as readonly string[]).includes(value)
 }
 
 export function setWindowFile(windowId: number, path: string | null): void {

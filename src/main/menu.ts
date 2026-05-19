@@ -1,46 +1,30 @@
 import { app, BrowserWindow, Menu, type MenuItemConstructorOptions } from 'electron'
-import {
-  APP_THEMES,
-  CODE_THEMES,
-  type AppTheme,
-  type CodeTheme,
-  type Theme,
-} from './state.js'
+import { THEME_PACKS, type Theme, type ThemePack } from './state.js'
 
 interface BuildMenuOptions {
   onNewWindow: () => void
   currentTheme: Theme
   onThemeChange: (theme: Theme) => void
-  currentAppTheme: AppTheme
-  onAppThemeChange: (theme: AppTheme) => void
-  currentCodeTheme: CodeTheme
-  onCodeThemeChange: (theme: CodeTheme) => void
+  currentThemePack: ThemePack
+  onThemePackChange: (pack: ThemePack) => void
+  onCycleThemePack: () => void
 }
 
-const APP_THEME_LABELS: Record<AppTheme, string> = {
-  classic: 'Classic',
-  dim: 'Dim',
-  solarized: 'Solarized',
-  nord: 'Nord',
-  rose: 'Rose',
-}
-
-const CODE_THEME_LABELS: Record<CodeTheme, string> = {
-  github: 'GitHub',
-  'atom-one': 'Atom One',
-  'tokyo-night': 'Tokyo Night',
-  nord: 'Nord',
-  monokai: 'Monokai',
+const THEME_PACK_LABELS: Record<ThemePack, string> = {
+  plain: 'Plain',
+  forest: 'Forest',
+  midnight: 'Midnight',
+  solarflare: 'Solar Flare',
+  cherry: 'Cherry',
 }
 
 export function buildMenu({
   onNewWindow,
   currentTheme,
   onThemeChange,
-  currentAppTheme,
-  onAppThemeChange,
-  currentCodeTheme,
-  onCodeThemeChange,
+  currentThemePack,
+  onThemePackChange,
+  onCycleThemePack,
 }: BuildMenuOptions): void {
   const sendToFocused = (channel: string) => {
     const win = BrowserWindow.getFocusedWindow()
@@ -56,18 +40,11 @@ export function buildMenu({
     click: () => onThemeChange(value),
   })
 
-  const appThemeItem = (value: AppTheme): MenuItemConstructorOptions => ({
-    label: APP_THEME_LABELS[value],
+  const packItem = (value: ThemePack): MenuItemConstructorOptions => ({
+    label: THEME_PACK_LABELS[value],
     type: 'radio',
-    checked: currentAppTheme === value,
-    click: () => onAppThemeChange(value),
-  })
-
-  const codeThemeItem = (value: CodeTheme): MenuItemConstructorOptions => ({
-    label: CODE_THEME_LABELS[value],
-    type: 'radio',
-    checked: currentCodeTheme === value,
-    click: () => onCodeThemeChange(value),
+    checked: currentThemePack === value,
+    click: () => onThemePackChange(value),
   })
 
   const template: MenuItemConstructorOptions[] = [
@@ -154,12 +131,13 @@ export function buildMenu({
           ],
         },
         {
-          label: 'App Theme',
-          submenu: APP_THEMES.map(appThemeItem),
+          label: 'Theme',
+          submenu: THEME_PACKS.map(packItem),
         },
         {
-          label: 'Code Theme',
-          submenu: CODE_THEMES.map(codeThemeItem),
+          label: 'Cycle Theme',
+          accelerator: 'CmdOrCtrl+T',
+          click: () => onCycleThemePack(),
         },
         { type: 'separator' },
         { role: 'reload' },

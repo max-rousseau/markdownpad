@@ -8,51 +8,48 @@ import { toggleTaskAt as toggleTaskAtInSource } from './lib/markdown'
 import {
   applyTheme,
   currentResolvedTheme,
-  type AppTheme,
-  type CodeTheme,
+  mermaidConfigFor,
   type ResolvedTheme,
   type Theme,
+  type ThemePack,
 } from './lib/theme'
 
 type Mode = 'edit' | 'view'
 
 interface AppProps {
   initialTheme: Theme
-  initialAppTheme: AppTheme
-  initialCodeTheme: CodeTheme
+  initialThemePack: ThemePack
 }
 
-export default function App({ initialTheme, initialAppTheme, initialCodeTheme }: AppProps) {
+export default function App({ initialTheme, initialThemePack }: AppProps) {
   const doc = useDocument()
   const [mode, setMode] = useState<Mode>('edit')
   const [theme, setThemeState] = useState<Theme>(initialTheme)
-  const [appTheme, setAppThemeState] = useState<AppTheme>(initialAppTheme)
-  const [codeTheme, setCodeThemeState] = useState<CodeTheme>(initialCodeTheme)
+  const [themePack, setThemePackState] = useState<ThemePack>(initialThemePack)
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(currentResolvedTheme())
 
   useEffect(() => {
-    applyTheme(theme, appTheme, codeTheme, setResolvedTheme)
-  }, [theme, appTheme, codeTheme])
+    applyTheme(theme, themePack, setResolvedTheme)
+  }, [theme, themePack])
 
   useEffect(() => {
     const offTheme = window.api.onThemeChanged((next) => setThemeState(next))
-    const offAppTheme = window.api.onAppThemeChanged((next) => setAppThemeState(next))
-    const offCodeTheme = window.api.onCodeThemeChanged((next) => setCodeThemeState(next))
+    const offPack = window.api.onThemePackChanged((next) => setThemePackState(next))
     return () => {
       offTheme()
-      offAppTheme()
-      offCodeTheme()
+      offPack()
     }
   }, [])
 
   useEffect(() => {
+    const cfg = mermaidConfigFor(themePack, resolvedTheme)
     mermaid.initialize({
       startOnLoad: false,
-      theme: resolvedTheme === 'dark' ? 'dark' : 'default',
       securityLevel: 'strict',
       fontFamily: 'inherit',
+      ...cfg,
     })
-  }, [resolvedTheme])
+  }, [themePack, resolvedTheme])
 
   const toggleMode = useCallback(() => {
     setMode((m) => (m === 'edit' ? 'view' : 'edit'))
@@ -159,7 +156,7 @@ export default function App({ initialTheme, initialAppTheme, initialCodeTheme }:
           <Editor value={doc.state.content} onChange={doc.setContent} theme={resolvedTheme} />
         ) : (
           <Preview
-            key={resolvedTheme}
+            key={`${themePack}-${resolvedTheme}`}
             content={doc.state.content}
             onToggleTaskAt={toggleTaskAt}
           />
