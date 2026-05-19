@@ -241,6 +241,22 @@ gantt
     Code signing           :         b3, after b2, 1d
 ```
 
+## Images
+
+Relative path (resolves against the markdown file's directory):
+
+![Edit mode screenshot](docs/screenshots/edit.png)
+
+External HTTPS URL (requires network):
+
+![Hosted on GitHub Pages](https://max-rousseau.github.io/markdownpad/screenshots/edit.png)
+
+Missing image (broken-image fallback):
+
+![Image that does not exist](does-not-exist.png)
+
+Inline image in a sentence: here is a small icon ![icon](docs/screenshots/edit.png) sitting in flow.
+
 ## Edge cases
 
 Empty heading anchor target:
