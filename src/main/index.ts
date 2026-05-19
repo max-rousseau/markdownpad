@@ -5,20 +5,18 @@ import { dirname, join } from 'node:path'
 import { buildMenu } from './menu.js'
 import { registerFileHandlers } from './files.js'
 import {
-  getAppTheme,
-  getCodeTheme,
+  cycleThemePack,
   getTheme,
+  getThemePack,
   loadState,
   persistState,
   removeWindow,
-  setAppTheme,
-  setCodeTheme,
   setTheme,
+  setThemePack,
   setWindowFile,
   updateWindowBounds,
-  type AppTheme,
-  type CodeTheme,
   type Theme,
+  type ThemePack,
 } from './state.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -185,18 +183,16 @@ app.whenReady().then(() => {
     isQuitting = false
   })
   ipcMain.handle('theme:get', () => getTheme())
-  ipcMain.handle('app-theme:get', () => getAppTheme())
-  ipcMain.handle('code-theme:get', () => getCodeTheme())
+  ipcMain.handle('theme-pack:get', () => getThemePack())
 
   const rebuildMenu = () =>
     buildMenu({
       onNewWindow: () => createWindow(),
       currentTheme: getTheme(),
       onThemeChange: (theme) => applyTheme(theme),
-      currentAppTheme: getAppTheme(),
-      onAppThemeChange: (appTheme) => applyAppTheme(appTheme),
-      currentCodeTheme: getCodeTheme(),
-      onCodeThemeChange: (codeTheme) => applyCodeTheme(codeTheme),
+      currentThemePack: getThemePack(),
+      onThemePackChange: (pack) => applyThemePack(pack),
+      onCycleThemePack: () => applyThemePack(cycleThemePack()),
     })
   rebuildMenu()
 
@@ -209,20 +205,11 @@ app.whenReady().then(() => {
     rebuildMenu()
   }
 
-  function applyAppTheme(appTheme: AppTheme) {
-    setAppTheme(appTheme)
+  function applyThemePack(pack: ThemePack) {
+    setThemePack(pack)
     persistState()
     for (const w of windows) {
-      if (!w.isDestroyed()) w.webContents.send('app-theme:changed', appTheme)
-    }
-    rebuildMenu()
-  }
-
-  function applyCodeTheme(codeTheme: CodeTheme) {
-    setCodeTheme(codeTheme)
-    persistState()
-    for (const w of windows) {
-      if (!w.isDestroyed()) w.webContents.send('code-theme:changed', codeTheme)
+      if (!w.isDestroyed()) w.webContents.send('theme-pack:changed', pack)
     }
     rebuildMenu()
   }

@@ -8,13 +8,7 @@ export interface OpenedFile {
 
 export type DiscardChoice = 'save' | 'discard' | 'cancel'
 export type Theme = 'light' | 'dark' | 'system'
-export type AppTheme = 'classic' | 'dim' | 'solarized' | 'nord' | 'rose'
-export type CodeTheme =
-  | 'github'
-  | 'atom-one'
-  | 'tokyo-night'
-  | 'nord'
-  | 'monokai'
+export type ThemePack = 'plain' | 'forest' | 'midnight' | 'solarflare' | 'cherry'
 
 const api = {
   openFile: (): Promise<OpenedFile | null> => ipcRenderer.invoke('file:open'),
@@ -47,20 +41,12 @@ const api = {
       ipcRenderer.off('theme:changed', handler)
     }
   },
-  getAppTheme: (): Promise<AppTheme> => ipcRenderer.invoke('app-theme:get'),
-  onAppThemeChanged: (cb: (theme: AppTheme) => void): (() => void) => {
-    const handler = (_e: unknown, theme: AppTheme) => cb(theme)
-    ipcRenderer.on('app-theme:changed', handler)
+  getThemePack: (): Promise<ThemePack> => ipcRenderer.invoke('theme-pack:get'),
+  onThemePackChanged: (cb: (pack: ThemePack) => void): (() => void) => {
+    const handler = (_e: unknown, pack: ThemePack) => cb(pack)
+    ipcRenderer.on('theme-pack:changed', handler)
     return () => {
-      ipcRenderer.off('app-theme:changed', handler)
-    }
-  },
-  getCodeTheme: (): Promise<CodeTheme> => ipcRenderer.invoke('code-theme:get'),
-  onCodeThemeChanged: (cb: (theme: CodeTheme) => void): (() => void) => {
-    const handler = (_e: unknown, theme: CodeTheme) => cb(theme)
-    ipcRenderer.on('code-theme:changed', handler)
-    return () => {
-      ipcRenderer.off('code-theme:changed', handler)
+      ipcRenderer.off('theme-pack:changed', handler)
     }
   },
 

@@ -1,46 +1,184 @@
-import githubLightCss from 'highlight.js/styles/github.css?raw'
-import githubDarkCss from 'highlight.js/styles/github-dark.css?raw'
-import atomOneLightCss from 'highlight.js/styles/atom-one-light.css?raw'
-import atomOneDarkCss from 'highlight.js/styles/atom-one-dark.css?raw'
-import tokyoNightLightCss from 'highlight.js/styles/tokyo-night-light.css?raw'
-import tokyoNightDarkCss from 'highlight.js/styles/tokyo-night-dark.css?raw'
-import nordCss from 'highlight.js/styles/nord.css?raw'
-import monokaiCss from 'highlight.js/styles/monokai.css?raw'
-
 export type Theme = 'light' | 'dark' | 'system'
 export type ResolvedTheme = 'light' | 'dark'
-export type AppTheme = 'classic' | 'dim' | 'solarized' | 'nord' | 'rose'
-export type CodeTheme = 'github' | 'atom-one' | 'tokyo-night' | 'nord' | 'monokai'
+export type ThemePack = 'plain' | 'forest' | 'midnight' | 'solarflare' | 'cherry'
 
-const APP_THEME_CLASSES: AppTheme[] = ['classic', 'dim', 'solarized', 'nord', 'rose']
+const THEME_PACK_CLASSES: ThemePack[] = ['plain', 'forest', 'midnight', 'solarflare', 'cherry']
 
-interface CodeThemeVariants {
-  light?: string
-  dark?: string
+interface MermaidConfig {
+  theme: 'default' | 'dark' | 'base' | 'neutral' | 'forest'
+  themeVariables?: Record<string, string>
 }
 
-const CODE_THEME_REGISTRY: Record<CodeTheme, CodeThemeVariants> = {
-  github: { light: githubLightCss, dark: githubDarkCss },
-  'atom-one': { light: atomOneLightCss, dark: atomOneDarkCss },
-  'tokyo-night': { light: tokyoNightLightCss, dark: tokyoNightDarkCss },
-  nord: { dark: nordCss },
-  monokai: { dark: monokaiCss },
+interface PackVariant {
+  mermaid: MermaidConfig
 }
 
-const STYLE_ID = 'hljs-theme'
+const MERMAID_FONT = '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif'
+
+// Mermaid theme variables per pack × mode. Plain uses mermaid's built-in
+// default/dark themes verbatim; the others use mermaid's `base` theme with
+// a custom palette so the diagram chrome harmonizes with the app chrome.
+export const THEME_PACKS: Record<ThemePack, { light: PackVariant; dark: PackVariant }> = {
+  plain: {
+    light: { mermaid: { theme: 'default' } },
+    dark: { mermaid: { theme: 'dark' } },
+  },
+  forest: {
+    light: {
+      mermaid: {
+        theme: 'base',
+        themeVariables: {
+          background: '#fdfbf6',
+          primaryColor: '#a8c08c',
+          primaryTextColor: '#2d3a23',
+          primaryBorderColor: '#5a7a3c',
+          lineColor: '#5a7a3c',
+          secondaryColor: '#d4d8b8',
+          tertiaryColor: '#e8ebd4',
+          mainBkg: '#a8c08c',
+          nodeBorder: '#5a7a3c',
+          edgeLabelBackground: '#fdfbf6',
+          fontFamily: MERMAID_FONT,
+        },
+      },
+    },
+    dark: {
+      mermaid: {
+        theme: 'base',
+        themeVariables: {
+          background: '#0f1a0f',
+          primaryColor: '#3a5a2c',
+          primaryTextColor: '#c4d4a8',
+          primaryBorderColor: '#a8d68c',
+          lineColor: '#a8d68c',
+          secondaryColor: '#2a4220',
+          tertiaryColor: '#1f2e18',
+          mainBkg: '#3a5a2c',
+          nodeBorder: '#a8d68c',
+          edgeLabelBackground: '#162216',
+          fontFamily: MERMAID_FONT,
+        },
+      },
+    },
+  },
+  midnight: {
+    light: {
+      mermaid: {
+        theme: 'base',
+        themeVariables: {
+          background: '#f4f6fa',
+          primaryColor: '#a4b8d8',
+          primaryTextColor: '#1a2440',
+          primaryBorderColor: '#4060a0',
+          lineColor: '#4060a0',
+          secondaryColor: '#c8d4ec',
+          tertiaryColor: '#dde4f2',
+          mainBkg: '#a4b8d8',
+          nodeBorder: '#4060a0',
+          edgeLabelBackground: '#f4f6fa',
+          fontFamily: MERMAID_FONT,
+        },
+      },
+    },
+    dark: {
+      mermaid: {
+        theme: 'base',
+        themeVariables: {
+          background: '#0a0e1f',
+          primaryColor: '#3a4a7a',
+          primaryTextColor: '#c4d0f0',
+          primaryBorderColor: '#8090d0',
+          lineColor: '#8090d0',
+          secondaryColor: '#2a3258',
+          tertiaryColor: '#1a2040',
+          mainBkg: '#3a4a7a',
+          nodeBorder: '#8090d0',
+          edgeLabelBackground: '#121a30',
+          fontFamily: MERMAID_FONT,
+        },
+      },
+    },
+  },
+  solarflare: {
+    light: {
+      mermaid: {
+        theme: 'base',
+        themeVariables: {
+          background: '#fdf6e8',
+          primaryColor: '#f0c068',
+          primaryTextColor: '#3a2818',
+          primaryBorderColor: '#c84a1a',
+          lineColor: '#c84a1a',
+          secondaryColor: '#fad898',
+          tertiaryColor: '#fce8c4',
+          mainBkg: '#f0c068',
+          nodeBorder: '#c84a1a',
+          edgeLabelBackground: '#fdf6e8',
+          fontFamily: MERMAID_FONT,
+        },
+      },
+    },
+    dark: {
+      mermaid: {
+        theme: 'base',
+        themeVariables: {
+          background: '#1a0a05',
+          primaryColor: '#8a4818',
+          primaryTextColor: '#f0d4a8',
+          primaryBorderColor: '#f0a040',
+          lineColor: '#f0a040',
+          secondaryColor: '#5a300c',
+          tertiaryColor: '#3a1f08',
+          mainBkg: '#8a4818',
+          nodeBorder: '#f0a040',
+          edgeLabelBackground: '#251208',
+          fontFamily: MERMAID_FONT,
+        },
+      },
+    },
+  },
+  cherry: {
+    light: {
+      mermaid: {
+        theme: 'base',
+        themeVariables: {
+          background: '#fef4f4',
+          primaryColor: '#f0a8c8',
+          primaryTextColor: '#5a1a30',
+          primaryBorderColor: '#c8408c',
+          lineColor: '#c8408c',
+          secondaryColor: '#f8c8d8',
+          tertiaryColor: '#fce0e8',
+          mainBkg: '#f0a8c8',
+          nodeBorder: '#c8408c',
+          edgeLabelBackground: '#fef4f4',
+          fontFamily: MERMAID_FONT,
+        },
+      },
+    },
+    dark: {
+      mermaid: {
+        theme: 'base',
+        themeVariables: {
+          background: '#1a0810',
+          primaryColor: '#7a2848',
+          primaryTextColor: '#f4c8d8',
+          primaryBorderColor: '#e060a0',
+          lineColor: '#e060a0',
+          secondaryColor: '#5a1830',
+          tertiaryColor: '#3a0e1a',
+          mainBkg: '#7a2848',
+          nodeBorder: '#e060a0',
+          edgeLabelBackground: '#2a1018',
+          fontFamily: MERMAID_FONT,
+        },
+      },
+    },
+  },
+}
 
 let mediaQuery: MediaQueryList | null = null
 let mediaListener: ((e: MediaQueryListEvent) => void) | null = null
-
-function ensureStyleElement(): HTMLStyleElement {
-  let el = document.getElementById(STYLE_ID) as HTMLStyleElement | null
-  if (!el) {
-    el = document.createElement('style')
-    el.id = STYLE_ID
-    document.head.appendChild(el)
-  }
-  return el
-}
 
 function resolve(theme: Theme): ResolvedTheme {
   if (theme === 'system') {
@@ -49,33 +187,24 @@ function resolve(theme: Theme): ResolvedTheme {
   return theme
 }
 
-function pickCodeCss(codeTheme: CodeTheme, resolved: ResolvedTheme): string {
-  const variants = CODE_THEME_REGISTRY[codeTheme]
-  const preferred = variants[resolved]
-  if (preferred) return preferred
-  // Theme doesn't ship a variant for the current mode — fall back to whichever exists.
-  return variants.dark ?? variants.light ?? ''
-}
-
-export function applyCodeTheme(codeTheme: CodeTheme, resolved: ResolvedTheme): void {
-  ensureStyleElement().textContent = pickCodeCss(codeTheme, resolved)
-}
-
 export function applyChrome(resolved: ResolvedTheme): void {
   document.documentElement.classList.toggle('dark', resolved === 'dark')
 }
 
-export function applyAppTheme(appTheme: AppTheme): void {
+export function applyThemePack(pack: ThemePack): void {
   const root = document.documentElement
-  for (const t of APP_THEME_CLASSES) {
-    root.classList.toggle(`theme-${t}`, t === appTheme)
+  for (const p of THEME_PACK_CLASSES) {
+    root.classList.toggle(`pack-${p}`, p === pack)
   }
+}
+
+export function mermaidConfigFor(pack: ThemePack, resolved: ResolvedTheme): MermaidConfig {
+  return THEME_PACKS[pack][resolved].mermaid
 }
 
 export function applyTheme(
   theme: Theme,
-  appTheme: AppTheme,
-  codeTheme: CodeTheme,
+  pack: ThemePack,
   onResolvedChange?: (r: ResolvedTheme) => void,
 ): void {
   if (mediaQuery && mediaListener) {
@@ -85,9 +214,8 @@ export function applyTheme(
   }
 
   const resolved = resolve(theme)
-  applyAppTheme(appTheme)
+  applyThemePack(pack)
   applyChrome(resolved)
-  applyCodeTheme(codeTheme, resolved)
   onResolvedChange?.(resolved)
 
   if (theme === 'system') {
@@ -95,7 +223,6 @@ export function applyTheme(
     mediaListener = (e: MediaQueryListEvent) => {
       const next: ResolvedTheme = e.matches ? 'dark' : 'light'
       applyChrome(next)
-      applyCodeTheme(codeTheme, next)
       onResolvedChange?.(next)
     }
     mediaQuery.addEventListener('change', mediaListener)

@@ -5,16 +5,15 @@ import { applyTheme } from './lib/theme'
 import './index.css'
 
 async function bootstrap() {
-  const [theme, appTheme, codeTheme] = await Promise.all([
+  const [theme, themePack] = await Promise.all([
     window.api.getTheme(),
-    window.api.getAppTheme(),
-    window.api.getCodeTheme(),
+    window.api.getThemePack(),
   ])
-  applyTheme(theme, appTheme, codeTheme)
+  applyTheme(theme, themePack)
 
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
-      <App initialTheme={theme} initialAppTheme={appTheme} initialCodeTheme={codeTheme} />
+      <App initialTheme={theme} initialThemePack={themePack} />
     </StrictMode>,
   )
 }
