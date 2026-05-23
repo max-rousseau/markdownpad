@@ -158,6 +158,7 @@ export default function App({ initialTheme, initialThemePack }: AppProps) {
           <Preview
             key={`${themePack}-${resolvedTheme}`}
             content={doc.state.content}
+            docPath={doc.state.path}
             onToggleTaskAt={toggleTaskAt}
           />
         )}
