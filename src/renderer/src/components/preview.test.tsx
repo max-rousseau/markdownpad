@@ -12,7 +12,7 @@ vi.mock('./mermaid-block', () => ({
 describe('<Preview />', () => {
   it('renders one checkbox per task-list item, in document order', () => {
     const content = '- [x] one\n- [x] two\n- [ ] three\n- [ ] four\n'
-    render(<Preview content={content} onToggleTaskAt={() => {}} />)
+    render(<Preview content={content} docPath={null} onToggleTaskAt={() => {}} />)
     const boxes = screen.getAllByRole('checkbox')
     expect(boxes).toHaveLength(4)
     expect((boxes[0] as HTMLInputElement).checked).toBe(true)
@@ -26,7 +26,7 @@ describe('<Preview />', () => {
     const content = '- [x] one\n- [x] two\n- [ ] three\n- [ ] four\n'
     const onToggle = vi.fn()
 
-    render(<Preview content={content} onToggleTaskAt={onToggle} />)
+    render(<Preview content={content} docPath={null} onToggleTaskAt={onToggle} />)
     const boxes = screen.getAllByRole('checkbox')
 
     // Click the third checkbox — the previous off-by-one bug toggled the wrong one.
@@ -48,7 +48,7 @@ describe('<Preview />', () => {
       '',
       '- [ ] also real',
     ].join('\n')
-    render(<Preview content={content} onToggleTaskAt={() => {}} />)
+    render(<Preview content={content} docPath={null} onToggleTaskAt={() => {}} />)
     expect(screen.getAllByRole('checkbox')).toHaveLength(2)
   })
 
@@ -56,7 +56,7 @@ describe('<Preview />', () => {
     const user = userEvent.setup()
     const content = '- [x] alpha\n- [x] beta\n- [ ] gamma\n- [ ] delta\n'
     const onToggle = vi.fn()
-    render(<Preview content={content} onToggleTaskAt={onToggle} />)
+    render(<Preview content={content} docPath={null} onToggleTaskAt={onToggle} />)
 
     const boxes = screen.getAllByRole('checkbox')
     for (const box of boxes) await user.click(box)
