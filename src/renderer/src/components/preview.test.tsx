@@ -74,4 +74,27 @@ describe('<Preview />', () => {
       expect(content.slice(offset, lineEnd)).toContain(labels[i])
     })
   })
+
+  it('renders a single newline within a paragraph as a line break', () => {
+    const content = 'line one\nline two'
+    const { container } = render(
+      <Preview content={content} docPath={null} onToggleTaskAt={() => {}} />
+    )
+    const paragraphs = container.querySelectorAll('p')
+    expect(paragraphs).toHaveLength(1)
+    expect(paragraphs[0].querySelectorAll('br')).toHaveLength(1)
+    expect(paragraphs[0].textContent?.replace(/\s+/g, ' ').trim()).toBe('line one line two')
+  })
+
+  it('still renders blank-line-separated text as two distinct paragraphs', () => {
+    const content = 'line one\n\nline two'
+    const { container } = render(
+      <Preview content={content} docPath={null} onToggleTaskAt={() => {}} />
+    )
+    const paragraphs = container.querySelectorAll('p')
+    expect(paragraphs).toHaveLength(2)
+    expect(paragraphs[0].querySelectorAll('br')).toHaveLength(0)
+    expect(paragraphs[0].textContent).toBe('line one')
+    expect(paragraphs[1].textContent).toBe('line two')
+  })
 })

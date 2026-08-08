@@ -1,5 +1,6 @@
 import ReactMarkdown, { defaultUrlTransform, type Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import remarkBreaks from 'remark-breaks'
 import rehypeHighlight from 'rehype-highlight'
 import { rehypeTaskOffsets } from '@/lib/rehype-task-offsets'
 import { MermaidBlock } from './mermaid-block'
@@ -81,7 +82,7 @@ export function Preview({ content, docPath, onToggleTaskAt }: PreviewProps) {
   return (
     <div className="markdown-preview h-full w-full overflow-auto">
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={[remarkGfm, remarkBreaks]}
         rehypePlugins={[
           rehypeTaskOffsets,
           [rehypeHighlight, { detect: true, ignoreMissing: true }],
