@@ -98,6 +98,12 @@ export function buildMenu({
           click: () => sendToFocused('menu:save-as'),
         },
         { type: 'separator' },
+        {
+          label: 'Print…',
+          accelerator: 'CmdOrCtrl+P',
+          click: () => sendToFocused('menu:print'),
+        },
+        { type: 'separator' },
         { role: 'close' },
       ],
     },
