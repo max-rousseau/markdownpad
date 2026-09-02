@@ -54,6 +54,7 @@ const api = {
   onMenuSave: (cb: () => void) => subscribe('menu:save', cb),
   onMenuSaveAs: (cb: () => void) => subscribe('menu:save-as', cb),
   onMenuTogglePreview: (cb: () => void) => subscribe('menu:toggle-preview', cb),
+  onMenuPrint: (cb: () => void) => subscribe('menu:print', cb),
   onFileOpenedExternally: (cb: (path: string) => void): (() => void) => {
     const handler = (_e: unknown, path: string) => cb(path)
     ipcRenderer.on('file:opened-externally', handler)

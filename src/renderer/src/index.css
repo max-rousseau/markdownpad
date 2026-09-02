@@ -454,6 +454,111 @@ textarea {
   accent-color: var(--color-primary);
 }
 
+/* ─── Print ─────────────────────────────────────────────────── *
+ *  Only the rendered preview is printed. App chrome is hidden,
+ *  the app-shell height/overflow constraints are released so the
+ *  document paginates, and the palette is forced to Plain light
+ *  so no theme pack burns ink. Overriding the pack variables with
+ *  !important is what beats the `.pack-X.dark` selectors on <html>.
+ * ──────────────────────────────────────────────────────────── */
+
+@media print {
+  :root {
+    color-scheme: light;
+    --background: #ffffff !important;
+    --foreground: #1a1a1a !important;
+    --muted: #f6f8fa !important;
+    --muted-foreground: #5a5a5a !important;
+    --border: #e1e4e8 !important;
+    --accent: #e6f0fa !important;
+    --accent-foreground: #1a1a1a !important;
+    --primary: #0066cc !important;
+    --primary-foreground: #ffffff !important;
+    --code-keyword: #d73a49 !important;
+    --code-string: #032f62 !important;
+    --code-number: #005cc5 !important;
+    --code-comment: #6a737d !important;
+    --code-fn: #6f42c1 !important;
+    --code-type: #005cc5 !important;
+  }
+
+  @page {
+    margin: 15mm;
+  }
+
+  html,
+  body,
+  #root {
+    height: auto;
+    overflow: visible;
+    background: #ffffff;
+  }
+
+  /* App shell: <div class="flex h-full flex-col"> > <div class="flex flex-1 min-h-0"> */
+  #root > div,
+  #root > div > div:not(.app-drag) {
+    display: block;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .app-drag {
+    display: none;
+  }
+
+  .markdown-preview {
+    height: auto;
+    overflow: visible;
+    padding: 0;
+  }
+
+  .markdown-preview a {
+    color: inherit;
+  }
+
+  .markdown-preview pre,
+  .markdown-preview code,
+  .markdown-preview th,
+  .markdown-preview .mermaid-block {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .markdown-preview pre {
+    overflow-x: visible;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .markdown-preview .mermaid-block {
+    overflow-x: visible;
+  }
+
+  .markdown-preview img,
+  .markdown-preview .mermaid-block svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .markdown-preview pre,
+  .markdown-preview table,
+  .markdown-preview blockquote,
+  .markdown-preview img,
+  .markdown-preview .mermaid-block {
+    break-inside: avoid;
+  }
+
+  .markdown-preview h1,
+  .markdown-preview h2,
+  .markdown-preview h3,
+  .markdown-preview h4,
+  .markdown-preview h5,
+  .markdown-preview h6 {
+    break-after: avoid;
+  }
+}
+
 .app-drag {
   -webkit-app-region: drag;
 }

@@ -14,6 +14,7 @@ A focused, Notepad-inspired markdown editor for macOS. Open, edit, save markdown
 - View mode renders GitHub-flavored markdown — including tables, footnotes, syntax-highlighted code, and **mermaid diagrams**
 - Images render in view mode — both relative paths (`![](images/foo.png)`) resolved against the open document's directory and external `https://…` URLs
 - Interactive task-list checkboxes — click them in view mode to toggle
+- Print the rendered document (`⌘P`) — ink-friendly light styling, page breaks that keep code blocks, tables, and diagrams intact
 - Multi-window — `⌘N` opens a new editor; closing with unsaved changes prompts you
 - Reopens the documents you had open the last time you quit
 - Light, Dark, and System appearance, plus 5 unified theme packs (Plain, Forest, Midnight, Solar Flare, Cherry) that style the app, code highlighting, and mermaid diagrams together — `⌘T` cycles
@@ -35,6 +36,7 @@ Download the latest `.dmg` from the [Releases](../../releases) page, open it, an
 | Open…                   | `⌘O`                 |
 | Save                    | `⌘S`                 |
 | Save As…                | `⇧⌘S`                |
+| Print…                  | `⌘P`                 |
 | Toggle edit / view      | `⇧⌘P` or right-click |
 | Cycle theme pack        | `⌘T`                 |
 | Zoom in / out           | `⇧⌘=` / `⇧⌘-`        |
