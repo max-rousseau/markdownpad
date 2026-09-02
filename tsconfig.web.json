@@ -17,9 +17,8 @@
     "allowSyntheticDefaultImports": true,
     "composite": true,
     "noEmit": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/renderer/src/*"]
+      "@/*": ["./src/renderer/src/*"]
     },
     "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
