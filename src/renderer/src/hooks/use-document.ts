@@ -113,10 +113,10 @@ export function useDocument() {
 
   const saveAs = useCallback(async (): Promise<boolean> => {
     const snapshot = stateRef.current
-    clearExternalChange()
     const suggested = snapshot.name === UNTITLED_NAME ? 'Untitled.md' : snapshot.name
     const result = await window.api.saveFileAs(snapshot.content, suggested)
     if (!result) return false
+    clearExternalChange()
     savedContentRef.current = result.content
     commit({
       path: result.path,

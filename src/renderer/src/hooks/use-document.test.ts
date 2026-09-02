@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { act, renderHook } from '@testing-library/react'
 import { useDocument } from './use-document'
 
@@ -88,6 +88,33 @@ describe('useDocument external changes', () => {
 
     expect(result.current.state.content).toBe(BASE)
     expect(result.current.externalChange).toBeNull()
+  })
+
+  it('leaves a pending conflict and its disk snapshot intact when saveAs is cancelled', async () => {
+    const { result } = openDocument()
+    act(() => result.current.setContent('mine only\n'))
+    act(() => result.current.applyExternalChange(PATH, 'theirs only\n'))
+    expect(result.current.externalChange?.kind).toBe('conflict')
+
+    const saveFileAs = vi.fn().mockResolvedValue(null)
+    Object.assign(window, { api: { saveFileAs } })
+
+    let saveAsResult: boolean | undefined
+    await act(async () => {
+      saveAsResult = await result.current.saveAs()
+    })
+
+    expect(saveAsResult).toBe(false)
+    expect(saveFileAs).toHaveBeenCalledTimes(1)
+    // The conflict banner is still showing...
+    expect(result.current.externalChange?.kind).toBe('conflict')
+    expect(result.current.state.content).toBe('mine only\n')
+    // ...and its disk snapshot (pendingDiskRef) is still there: taking
+    // "theirs" now still recovers the disk content that was pending before
+    // the cancelled save-as, rather than resolving to nothing.
+    act(() => result.current.resolveConflict('theirs'))
+    expect(result.current.state.content).toBe('theirs only\n')
+    expect(result.current.state.dirty).toBe(false)
   })
 
   it('clears a pending conflict when the document is reopened', () => {

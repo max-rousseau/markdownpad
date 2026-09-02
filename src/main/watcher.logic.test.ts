@@ -24,7 +24,29 @@ vi.mock('node:fs', async () => {
   }
 })
 
+// Lets a single test swap in a controllable readFile (e.g. one that stays
+// pending until the test resolves it) to simulate a race with the read
+// watcher.ts's fire() performs, without disturbing the writeFile/mkdtemp/rm
+// helpers this suite uses for real filesystem setup.
+//
+// vi.mock's factory runs when 'node:fs/promises' is first imported, which
+// happens as early as this file's own top-level import below — so the holder
+// it closes over must be created via vi.hoisted, not a plain top-level const.
+type ReadFile = typeof import('node:fs/promises').readFile
+const fsPromisesMock = vi.hoisted<{ readFile: ReadFile }>(() => ({}) as { readFile: ReadFile })
+
+vi.mock('node:fs/promises', async () => {
+  const actual = await vi.importActual<typeof import('node:fs/promises')>('node:fs/promises')
+  fsPromisesMock.readFile = actual.readFile
+  return {
+    ...actual,
+    readFile: ((...args: Parameters<ReadFile>) => fsPromisesMock.readFile(...args)) as ReadFile,
+  }
+})
+
 const { noteSelfWrite, stopForWindow, watchForWindow } = await import('./watcher.js')
+const actualReadFile = (await vi.importActual<typeof import('node:fs/promises')>('node:fs/promises'))
+  .readFile
 
 function emit(name: string | null): void {
   for (const l of listeners) l.cb('change', name)
@@ -47,6 +69,7 @@ describe('watcher logic (faked fs.watch)', () => {
 
   afterEach(async () => {
     stopForWindow(1)
+    fsPromisesMock.readFile = actualReadFile
     await rm(dir, { recursive: true, force: true })
   })
 
@@ -113,6 +136,42 @@ describe('watcher logic (faked fs.watch)', () => {
     emit('note.md')
     await tick(300)
     expect(onChange).toHaveBeenCalledWith(file, 'reborn\n')
+  })
+
+  it('re-arms instead of publishing when a self-write lands mid-read, then delivers the true content', async () => {
+    watchForWindow(1, file, onChange)
+    await writeFile(file, 'external\n', 'utf8')
+
+    // Stall the in-flight read so we can land a self-write while it's pending.
+    let resolveRead!: (content: string) => void
+    const pendingRead = new Promise<string>((resolve) => {
+      resolveRead = resolve
+    })
+    fsPromisesMock.readFile = (() => pendingRead) as unknown as ReadFile
+
+    emit('note.md')
+    await tick(150) // debounce fires; fire() is now awaiting the stalled read
+
+    // A self-write lands (and, in the real timeline, another external edit
+    // follows it) while the read above is still in flight.
+    noteSelfWrite(1, file, 'ours\n')
+    await writeFile(file, 'ours-plus-external\n', 'utf8')
+
+    // The stalled read resolves with content that predates the self-write.
+    // Give fire() just enough time to resume and re-arm, but not enough for
+    // the re-armed DEBOUNCE_MS timer to fire too — otherwise it would still
+    // hit the same stalled-and-now-resolved readFile stub and "confirm" the
+    // stale content instead of exercising a fresh read.
+    resolveRead('external\n')
+    await tick(30)
+    expect(onChange).not.toHaveBeenCalled()
+
+    // Restore the real readFile before the re-armed timer's read fires, so it
+    // finds disk has moved on past what noteSelfWrite recorded.
+    fsPromisesMock.readFile = actualReadFile
+    await tick(300)
+    expect(onChange).toHaveBeenCalledTimes(1)
+    expect(onChange).toHaveBeenCalledWith(file, 'ours-plus-external\n')
   })
 
   it('stops reporting after stopForWindow', async () => {

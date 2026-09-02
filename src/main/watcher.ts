@@ -13,6 +13,9 @@ interface WatchEntry {
   watcher: FSWatcher
   baseline: string
   timer: ReturnType<typeof setTimeout> | null
+  // Bumped by noteSelfWrite. Lets fire() detect a self-write that landed
+  // during its in-flight read, so it doesn't publish stale content.
+  writeSeq: number
 }
 
 const registry = new Map<number, WatchEntry>()
@@ -49,6 +52,7 @@ export function watchForWindow(
     path,
     baseline: readOrEmpty(path),
     timer: null,
+    writeSeq: 0,
     watcher: watch(dirname(path), { persistent: false }, (_event, filename) => {
       if (filename !== null && basename(filename.toString()) !== target) return
       if (entry.timer) clearTimeout(entry.timer)
@@ -58,12 +62,21 @@ export function watchForWindow(
 
   async function fire(): Promise<void> {
     entry.timer = null
+    const seqAtRead = entry.writeSeq
     let content: string
     try {
       content = await readFile(entry.path, 'utf8')
     } catch {
       // Mid-rename, or the file was deleted. Keep watching: the next event
       // (including a recreation) resolves it.
+      return
+    }
+    if (entry.writeSeq !== seqAtRead) {
+      // A self-write landed while this read was in flight: the content we
+      // just read may already be stale relative to the new baseline. Re-arm
+      // the debounce instead of publishing; the disk has settled by the time
+      // it fires again.
+      entry.timer = setTimeout(fire, DEBOUNCE_MS)
       return
     }
     // Identical content covers FSEvents duplicates, chmod-only touches, and the
@@ -95,4 +108,5 @@ export function noteSelfWrite(windowId: number, path: string, content: string): 
   const entry = registry.get(windowId)
   if (!entry || entry.path !== path) return
   entry.baseline = content
+  entry.writeSeq++
 }

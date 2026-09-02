@@ -264,8 +264,10 @@ textarea {
 }
 
 .reload-pill-action:hover {
-  background: var(--muted);
-  color: var(--foreground);
+  /* --accent-foreground is chosen to contrast with the pill's --accent
+     background in every theme, so tint with it instead of --muted (which
+     can end up nearly indistinguishable from --accent in light packs). */
+  background: color-mix(in srgb, var(--accent-foreground) 18%, transparent);
 }
 
 .reload-pill-transient {
