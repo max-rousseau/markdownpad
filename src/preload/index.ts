@@ -62,6 +62,15 @@ const api = {
       ipcRenderer.off('file:opened-externally', handler)
     }
   },
+  onFileChangedExternally: (
+    cb: (payload: { path: string; content: string }) => void,
+  ): (() => void) => {
+    const handler = (_e: unknown, payload: { path: string; content: string }) => cb(payload)
+    ipcRenderer.on('file:changed-externally', handler)
+    return () => {
+      ipcRenderer.off('file:changed-externally', handler)
+    }
+  },
 }
 
 function subscribe(channel: string, cb: () => void): () => void {

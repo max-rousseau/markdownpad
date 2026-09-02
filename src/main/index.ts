@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { buildMenu } from './menu.js'
 import { registerFileHandlers } from './files.js'
+import { stopForWindow, watchForWindow } from './watcher.js'
 import {
   cycleThemePack,
   getTheme,
@@ -104,6 +105,7 @@ export function createWindow(initialFile?: string): BrowserWindow {
   })
 
   windows.add(win)
+  const webContentsId = win.webContents.id
 
   win.on('ready-to-show', () => {
     win.show()
@@ -134,6 +136,7 @@ export function createWindow(initialFile?: string): BrowserWindow {
   })
 
   win.on('closed', () => {
+    stopForWindow(webContentsId)
     windows.delete(win)
   })
 
@@ -168,6 +171,13 @@ app.whenReady().then(() => {
   registerFileHandlers()
   ipcMain.on('state:set-current-file', (event, path: string | null) => {
     setWindowFile(event.sender.id, path)
+    // Every path transition (open, save-as, close) routes through here, so this
+    // is the single place the live-reload watch needs to follow.
+    const sender = event.sender
+    watchForWindow(sender.id, path, (changedPath, content) => {
+      if (sender.isDestroyed()) return
+      sender.send('file:changed-externally', { path: changedPath, content })
+    })
   })
   ipcMain.on('state:set-dirty', (event, dirty: boolean) => {
     dirtyByWindow.set(event.sender.id, !!dirty)
