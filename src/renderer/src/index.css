@@ -228,6 +228,57 @@ textarea {
   user-select: text;
 }
 
+/* ─── Live-reload notice ────────────────────────────────────── *
+ *  Floats over the right end of the title bar. Transient states
+ *  fade themselves out; the conflict state waits for a choice.
+ * ──────────────────────────────────────────────────────────── */
+
+.reload-pill {
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-foreground);
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: nowrap;
+  -webkit-app-region: no-drag;
+}
+
+.reload-pill-action {
+  padding: 0 0.35rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--accent-foreground);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.reload-pill-action:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+.reload-pill-transient {
+  animation: reload-pill-fade var(--reload-pill-duration, 2.5s) ease-in-out forwards;
+}
+
+@keyframes reload-pill-fade {
+  0% { opacity: 0; transform: translateY(-4px); }
+  12% { opacity: 1; transform: translateY(0); }
+  75% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-4px); }
+}
+
 .cm-editor {
   height: 100%;
   background: transparent !important;
