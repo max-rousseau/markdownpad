@@ -1,10 +1,14 @@
 import { app, BrowserWindow, dialog, ipcMain } from 'electron'
 import { readFile, writeFile } from 'node:fs/promises'
-import { basename } from 'node:path'
+import { basename, dirname, join } from 'node:path'
 
 const MARKDOWN_FILTERS = [
   { name: 'Markdown', extensions: ['md', 'markdown', 'mdown', 'mkd'] },
 ]
+
+// Electron 44 dialogs default to ~/Downloads and don't remember the last-used
+// directory when defaultPath is omitted, so we track it ourselves.
+let lastDialogDir: string | null = null
 
 export interface OpenedFile {
   path: string
@@ -24,10 +28,12 @@ export function registerFileHandlers(): void {
       title: 'Open Markdown File',
       properties: ['openFile'],
       filters: MARKDOWN_FILTERS,
+      defaultPath: lastDialogDir ?? undefined,
     })
     if (result.canceled || result.filePaths.length === 0) return null
     const file = await readMarkdownFile(result.filePaths[0])
     app.addRecentDocument(file.path)
+    lastDialogDir = dirname(file.path)
     return file
   })
 
@@ -51,12 +57,13 @@ export function registerFileHandlers(): void {
       const win = BrowserWindow.fromWebContents(event.sender) ?? undefined
       const result = await dialog.showSaveDialog(win!, {
         title: 'Save Markdown File',
-        defaultPath: suggestedName,
+        defaultPath: lastDialogDir ? join(lastDialogDir, suggestedName) : suggestedName,
         filters: MARKDOWN_FILTERS,
       })
       if (result.canceled || !result.filePath) return null
       await writeFile(result.filePath, content, 'utf8')
       app.addRecentDocument(result.filePath)
+      lastDialogDir = dirname(result.filePath)
       return {
         path: result.filePath,
         name: basename(result.filePath),
