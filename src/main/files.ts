@@ -1,6 +1,7 @@
 import { app, BrowserWindow, dialog, ipcMain } from 'electron'
 import { readFile, writeFile } from 'node:fs/promises'
 import { basename, dirname, join } from 'node:path'
+import { noteSelfWrite } from './watcher.js'
 
 const MARKDOWN_FILTERS = [
   { name: 'Markdown', extensions: ['md', 'markdown', 'mdown', 'mkd'] },
@@ -45,8 +46,9 @@ export function registerFileHandlers(): void {
 
   ipcMain.handle(
     'file:save',
-    async (_event, path: string, content: string): Promise<void> => {
+    async (event, path: string, content: string): Promise<void> => {
       await writeFile(path, content, 'utf8')
+      noteSelfWrite(event.sender.id, path, content)
       app.addRecentDocument(path)
     },
   )
@@ -62,6 +64,7 @@ export function registerFileHandlers(): void {
       })
       if (result.canceled || !result.filePath) return null
       await writeFile(result.filePath, content, 'utf8')
+      noteSelfWrite(event.sender.id, result.filePath, content)
       app.addRecentDocument(result.filePath)
       lastDialogDir = dirname(result.filePath)
       return {

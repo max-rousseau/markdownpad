@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import mermaid from 'mermaid'
 import { Editor } from './components/editor'
 import { Preview } from './components/preview'
+import { ReloadPill } from './components/reload-pill'
 import { TitleBar } from './components/title-bar'
 import { useDocument } from './hooks/use-document'
 import { toggleTaskAt as toggleTaskAtInSource } from './lib/markdown'
@@ -163,7 +164,11 @@ export default function App({ initialTheme, initialThemePack }: AppProps) {
     const offTogglePreview = window.api.onMenuTogglePreview(toggleMode)
     const offPrint = window.api.onMenuPrint(handlePrint)
     const offExternal = window.api.onFileOpenedExternally(handleOpenExternal)
+    const offChanged = window.api.onFileChangedExternally(({ path, content }) =>
+      doc.applyExternalChange(path, content),
+    )
     return () => {
+      offChanged()
       offOpen()
       offSave()
       offSaveAs()
@@ -206,8 +211,13 @@ export default function App({ initialTheme, initialThemePack }: AppProps) {
   }, [doc])
 
   return (
-    <div className="flex h-full flex-col bg-background text-foreground">
+    <div className="relative flex h-full flex-col bg-background text-foreground">
       <TitleBar fileName={doc.state.path ? doc.state.name : null} dirty={doc.state.dirty} />
+      <ReloadPill
+        change={doc.externalChange}
+        onDismiss={doc.dismissExternalChange}
+        onResolve={doc.resolveConflict}
+      />
       <div
         className="flex flex-1 min-h-0"
         onContextMenu={handleContextMenu}
